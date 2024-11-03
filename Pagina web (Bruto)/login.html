@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="styles1.css">
+    <script src="jquery-3.7.1.min.js"></script>
+    <script src="jscode1.js"></script>
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <div class="logo">
+                <img src="img\logo.png" width="30" height="30">
+                <a href="index.html">CBE</a>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Principal</a></li>
+                    <li><a href="gallery.html">Galeria</a></li>
+                </ul>
+            </nav>
+            <div class="botones_header">
+                <a href="" class="cta">Registrarse</a>
+                <a href="" class="cta">Iniciar Sesión</a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="section" id="sectionLR">
+            <div class="container">
+                <form id="formLogin" method="post" action="RegistrarUsuario">
+                    <h1>Login</h1>
+
+                    <label>Nombre en pantalla:</label>
+                    <input name="nombre" placeholder="Digite su nombre en pantalla" required autocomplete="on">
+                    
+                    <label>Contraseña:</label>
+                    <input name="contrasena" type="password" placeholder="Digite su contraseña" required autocomplete="on">
+                    
+                    <div class="button-container">
+                        <button type="submit">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-section">
+                <h3>Enlaces Rápidos</h3>
+                <ul>
+                    <li><a href="index.html">Principal</a></li>
+                    <li><a href="gallery.html">Galeria</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contacto</h3>
+                <p>Email: <a href="mailto:arduinoapp@gmail.com">arduinoapp@gmail.com</a></p>
+                <p>Teléfono: <a href="tel:+573232406056">+57 3232406056</a></p>
+            </div>
+            <div class="footer-section">
+                <h3>Síguenos</h3>
+                <ul>
+                    <li><a href="#">Facebook</a></li>
+                    <li><a href="#">Instagram</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Página web de CBE. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
