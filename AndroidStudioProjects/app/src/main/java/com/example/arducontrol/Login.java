@@ -3,6 +3,7 @@ package com.example.arducontrol;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -12,6 +13,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -24,15 +26,20 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.HashMap;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity {
+public class Login extends AppCompatActivity {
+
+    private String baseURL = TempData.url;
 
     private EditText editTextEmail;
     private EditText editTextPassword;
-    private Button buttonIngresar;
-    private TextView textViewRegistrarse;
+    private Button buttonLogin;
+    private TextView textViewRegister;
 
     RequestQueue requestQueue;
 
@@ -40,50 +47,63 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_login);
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
+        // Bloquear la orientación de la pantalla
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         editTextEmail = findViewById(R.id.editTextEmail);
         editTextPassword = findViewById(R.id.editTextPassword);
-        buttonIngresar = findViewById(R.id.buttonIngresar);
-        textViewRegistrarse = findViewById(R.id.textViewRegistrarse);
+        buttonLogin = findViewById(R.id.buttonLogin);
+        textViewRegister = findViewById(R.id.textViewRegister);
 
-        buttonIngresar.setOnClickListener(new View.OnClickListener() {
+        // Data de prueba
+        editTextEmail.setText("santiago@gmail.com");
+        editTextPassword.setText("123456");
+
+        buttonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ingresar("http://192.168.20.4/arducontrol_sql/ingresar.php");
+                login(baseURL +"/login/login.php");
             }
         });
 
-        textViewRegistrarse.setOnClickListener(new View.OnClickListener() {
+        textViewRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                registrarse(view);
+                Intent intent = new Intent(Login.this, Register.class);
+                startActivity(intent);
             }
         });
 
     }
 
-    public void registrarse(View view){
-        Intent intent = new Intent(MainActivity.this, Registro.class);
-        startActivity(intent);
-    }
+    public void login(String URL){
 
-    public void ingresar(String URL){
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                if (!response.isEmpty()){
-                    Intent intent = new Intent(getApplicationContext(), Control.class);
-                    Toast.makeText(getApplicationContext(), "Ingreso exitoso", Toast.LENGTH_SHORT).show();
+                try { // if (!response.isEmpty())
+                    JSONObject jsonObject = new JSONObject(response);
+                    String username = jsonObject.getString("username");
+                    String email = jsonObject.getString("email");
+
+                    // Guardando temporalmente los datos del usuario
+                    TempData.setEmail(email);
+                    TempData.setUsername(username);
+
+                    Intent intent = new Intent(getApplicationContext(), Home.class);
+                    Toast.makeText(getApplicationContext(), "Ingreso correctamente", Toast.LENGTH_SHORT).show();
                     startActivity(intent);
-                } else {
+
+                } catch (JSONException e) {
+                    // Si el JSON no es válido o está vacío
                     Toast.makeText(getApplicationContext(), "Credenciales incorrectas", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -91,6 +111,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_SHORT).show();
+                Log.d("ERRORRRR", error.toString());
             }
         }){
             @Nullable

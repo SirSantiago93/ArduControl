@@ -30,17 +30,20 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Registro extends AppCompatActivity {
+public class Register extends AppCompatActivity {
+
+    private String baseURL = TempData.url;
 
     private EditText editTextUsername;
     private EditText editTextEmail;
     private EditText editTextPassword1;
     private EditText editTextPassword2;
-    private Button buttonRegistrarse;
+    private Button buttonRegister;
+    private Button buttonGoBack;
 
-    private Button buttonBuscar;
-    private Button buttonEditar;
-    private Button buttonEliminar;
+    private Button buttonSearch;
+    private Button buttonEdit;
+    private Button buttonDelete;
 
     RequestQueue requestQueue;
 
@@ -48,7 +51,7 @@ public class Registro extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_registro);
+        setContentView(R.layout.activity_register);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -61,44 +64,59 @@ public class Registro extends AppCompatActivity {
         editTextEmail = findViewById(R.id.editTextEmail);
         editTextPassword1 = findViewById(R.id.editTextPassword1);
         editTextPassword2 = findViewById(R.id.editTextPassword2);
-        buttonRegistrarse = findViewById(R.id.buttonIngresar);
+        buttonRegister = findViewById(R.id.buttonLogin);
 
-        buttonBuscar = findViewById(R.id.buttonBuscar);
-        buttonEditar = findViewById(R.id.buttonEditar);
-        buttonEliminar = findViewById(R.id.buttonEliminar);
+        buttonSearch = findViewById(R.id.buttonSearch);
+        buttonEdit = findViewById(R.id.buttonEdit);
+        buttonDelete = findViewById(R.id.buttonDelete);
+        buttonGoBack = findViewById(R.id.buttonGoBack);
 
-        buttonRegistrarse.setOnClickListener(new View.OnClickListener() {
+        buttonRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                insertarUsuario("http://192.168.20.4/arducontrol_sql/insertar_usuario.php");
+                insertUser(baseURL +"/register/insertUser.php");
             }
         });
 
-        buttonBuscar.setOnClickListener(new View.OnClickListener() {
+        buttonSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String stringEmail = editTextEmail.getText().toString();
                 String stringPassword1 = editTextPassword1.getText().toString();
-                buscarUsuario("http://192.168.20.4/arducontrol_sql/buscar_usuario.php?email="+stringEmail.toLowerCase()+"&password="+stringPassword1);
+                searchUser(baseURL +"/register/searchUser.php?email="+stringEmail.toLowerCase()+"&password="+stringPassword1);
             }
         });
 
-        buttonEditar.setOnClickListener(new View.OnClickListener() {
+        buttonEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                editarUsuario("http://192.168.20.4/arducontrol_sql/editar_usuario.php");
+                editUser(baseURL +"/register/editUser.php");
             }
         });
 
-        buttonEliminar.setOnClickListener(new View.OnClickListener() {
+        buttonDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                eliminar_usuario("http://192.168.20.4/arducontrol_sql/eliminar_usuario.php");
+                deleteUser(baseURL +"/register/deleteUser.php");
             }
         });
+
+        buttonGoBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getOnBackPressedDispatcher().onBackPressed();
+                finish();
+            }
+        });
+
+        // Ocultar los botones de prueba de CRUD
+        buttonSearch.setVisibility(View.INVISIBLE);
+        buttonEdit.setVisibility(View.INVISIBLE);
+        buttonDelete.setVisibility(View.INVISIBLE);
+
     }
 
-    public void insertarUsuario(String URL){
+    public void insertUser(String URL){
 
         String stringUsername = editTextUsername.getText().toString();
         String stringEmail = editTextEmail.getText().toString();
@@ -154,7 +172,7 @@ public class Registro extends AppCompatActivity {
         requestQueue.add(stringRequest);
     }
 
-    private void buscarUsuario(String URL){
+    private void searchUser(String URL){
 
         String stringEmail = editTextEmail.getText().toString();
         String stringPassword1 = editTextPassword1.getText().toString();
@@ -194,7 +212,7 @@ public class Registro extends AppCompatActivity {
         requestQueue.add(jsonArrayRequest);
     }
 
-    public void editarUsuario(String URL){
+    public void editUser(String URL){
 
         String stringUsername = editTextUsername.getText().toString();
         String stringEmail = editTextEmail.getText().toString();
@@ -248,7 +266,7 @@ public class Registro extends AppCompatActivity {
         requestQueue.add(stringRequest);
     }
 
-    public void eliminar_usuario(String URL){
+    public void deleteUser(String URL){
 
         String stringEmail = editTextEmail.getText().toString();
         String stringPassword1 = editTextPassword1.getText().toString();

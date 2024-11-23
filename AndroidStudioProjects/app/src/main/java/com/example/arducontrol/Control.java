@@ -5,12 +5,17 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -32,16 +37,34 @@ import android.content.pm.PackageManager;
 import android.util.Log;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 public class Control extends AppCompatActivity {
 
-    private static final String TAG = "Home";
+    private String baseURL = TempData.url;
+
+    private static final String TAG = "Control";
     private static final UUID BT_MODULE_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private static final int REQUEST_ENABLE_BT = 1;
     private static final int REQUEST_BLUETOOTH_CONNECT_PERMISSION = 3;
@@ -54,10 +77,12 @@ public class Control extends AppCompatActivity {
     private ArrayAdapter<String> deviceAdapter;
 
     private TextView textViewAssembly, textViewState;
-    private Button buttonBuscar, buttonConectarse, buttonOnL1, buttonOffL1, buttonOnL2, buttonOffL2, buttonDesconectarse;
-    private Spinner listaDispositivos;
-    private ImageView imageViewConfigurar;
-    private MovableButton movableButtonPrueba;
+    private Button buttonSearch, buttonConnect, buttonDisconnect;
+    private Spinner deviceList;
+    private ImageView imageViewConfig, imageViewSave;
+
+    RequestQueue requestQueue;
+    public ArrayList<MovileButton> buttonList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,26 +101,75 @@ public class Control extends AppCompatActivity {
         requestBluetoothConnectPermission(); // Permisos para conectarse via bluetooth
         requestLocationPermission(); // Permisos para buscar dispositivos bluetooth cercanos
 
+        // Añadiendo los botones a la lista
+        buttonList.add(findViewById(R.id.mButtonA));
+        buttonList.add(findViewById(R.id.mButtonB));
+        buttonList.add(findViewById(R.id.mButtonC));
+        buttonList.add(findViewById(R.id.mButtonD));
+        buttonList.add(findViewById(R.id.mButtonE));
+        buttonList.add(findViewById(R.id.mButtonF));
+        buttonList.add(findViewById(R.id.mButtonG));
+        buttonList.add(findViewById(R.id.mButtonH));
+        buttonList.add(findViewById(R.id.mButtonI));
+        buttonList.add(findViewById(R.id.mButtonJ));
+        buttonList.add(findViewById(R.id.mButtonK));
+        buttonList.add(findViewById(R.id.mButtonL));
+        buttonList.add(findViewById(R.id.mButtonM));
+        buttonList.add(findViewById(R.id.mButtonN));
+        buttonList.add(findViewById(R.id.mButtonO));
+        buttonList.add(findViewById(R.id.mButtonP));
+        buttonList.add(findViewById(R.id.mButtonQ));
+        buttonList.add(findViewById(R.id.mButtonR));
+        buttonList.add(findViewById(R.id.mButtonS));
+        buttonList.add(findViewById(R.id.mButtonT));
+        buttonList.add(findViewById(R.id.mButtonU));
+
+        // Configurando atributos de los botones
+        for (int i = 0; i < buttonList.size(); i++) {
+            final int index = i; // Variable final para usar en el Runnable
+            buttonList.get(i).post(new Runnable() {
+                @Override
+                public void run() {
+                    int posX = (int) buttonList.get(index).getX();
+                    int posY = (int) buttonList.get(index).getY();
+
+                    buttonList.get(index).saveDefaultPositions(posX, posY);
+                    buttonList.get(index).setCharacter((char)('A' + index));
+                    buttonList.get(index).setName("BTN_" + (char)('A' + index));
+
+                    buttonList.get(index).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            if (myConnectionBT == null){
+                                return;
+                            }
+                            showFastToast(buttonList.get(index).getName());
+                            myConnectionBT.write(buttonList.get(index).getCharacter());
+                        }
+                    });
+
+                }
+            });
+        }
+
         textViewState = findViewById(R.id.textViewState);
         textViewAssembly = findViewById(R.id.textViewAssembly);
-        buttonBuscar = findViewById(R.id.buttonBuscar);
-        buttonConectarse = findViewById(R.id.buttonConnect);
-        buttonOnL1 = findViewById(R.id.buttonOnL1);
-        buttonOffL1 = findViewById(R.id.buttonOffL1);
-        buttonOnL2 = findViewById(R.id.buttonOnL2);
-        buttonOffL2 = findViewById(R.id.buttonOffL2);
-        buttonDesconectarse = findViewById(R.id.buttonDisconnect);
-        listaDispositivos = findViewById(R.id.spinnerIds);
-        imageViewConfigurar = findViewById(R.id.imageViewConfig);
-        movableButtonPrueba = findViewById(R.id.mButtonTest);
+        buttonSearch = findViewById(R.id.buttonSearch);
+        buttonConnect = findViewById(R.id.buttonConnect);
+        buttonDisconnect = findViewById(R.id.buttonDisconnect);
+        imageViewConfig = findViewById(R.id.imageViewConfig);
+        imageViewSave = findViewById(R.id.imageViewSave);
+        deviceList = findViewById(R.id.spinnerIds);
+
+        textViewAssembly.setText(String.format("Ensamble: %s v%s", TempData.getTitle(), TempData.getVersion()));
 
         // Configurando la lista de dispositivos (spinner)
         deviceAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, btDeviceNames);
         deviceAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        listaDispositivos.setAdapter(deviceAdapter);
+        deviceList.setAdapter(deviceAdapter);
 
         // Guardar el dispositivo seleccionado en la lista
-        listaDispositivos.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        deviceList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 selectedBtDevice = getBluetoothDeviceByName(btDeviceNames.get(position));
@@ -107,21 +181,21 @@ public class Control extends AppCompatActivity {
             }
         });
 
-        buttonBuscar.setOnClickListener(new View.OnClickListener() {
+        buttonSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                buscarDispositivosBT();
+                searchDevicesBT();
             }
         });
 
-        buttonConectarse.setOnClickListener(new View.OnClickListener() {
+        buttonConnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 conectarDispositivoBT();
             }
         });
 
-        buttonDesconectarse.setOnClickListener(new View.OnClickListener() {
+        buttonDisconnect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (btSocket != null)
@@ -129,86 +203,30 @@ public class Control extends AppCompatActivity {
                     try {
                         btSocket.close();
                         myConnectionBT = null;
-                        Toast.makeText(getBaseContext(), "Device disconnected", Toast.LENGTH_SHORT).show();
-                        textViewState.setText("State: Disconnected");
+                        Toast.makeText(getBaseContext(), "Dispositivo desconectado", Toast.LENGTH_SHORT).show();
+                        textViewState.setText("Estado: Desconectado");
                     } catch (IOException e) {
-                        Toast.makeText(getBaseContext(), "Error: No disconnected", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getBaseContext(), "Error: No se puedo desconectar", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
         });
 
-        buttonOnL1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (myConnectionBT == null){
-                    return;
-                }
-                //Toast.makeText(getBaseContext(),"LUZ 1 ON",Toast.LENGTH_SHORT).show();
-                showFastToast("L1 ON");
-                myConnectionBT.write('1');
-            }
-        });
-
-        buttonOffL1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (myConnectionBT == null){
-                    return;
-                }
-                //Toast.makeText(getBaseContext(),"LUZ 1 OFF",Toast.LENGTH_SHORT).show();
-                showFastToast("L1 OFF");
-                myConnectionBT.write('2');
-            }
-        });
-
-        buttonOnL2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (myConnectionBT == null){
-                    return;
-                }
-                //Toast.makeText(getBaseContext(),"LUZ 2 ON",Toast.LENGTH_SHORT).show();
-                showFastToast("L2 ON");
-                myConnectionBT.write('3');
-            }
-        });
-
-        buttonOffL2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (myConnectionBT == null){
-                    return;
-                }
-                //Toast.makeText(getBaseContext(),"LUZ 2 OFF",Toast.LENGTH_SHORT).show();
-                showFastToast("L2 OFF");
-                myConnectionBT.write('4');
-            }
-        });
-
-        movableButtonPrueba.setOnClickListener(new View.OnClickListener() {
+        imageViewConfig.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (myConnectionBT == null){
-                    return;
-                }
-                //Toast.makeText(getBaseContext(),"LUZ 1 ON",Toast.LENGTH_SHORT).show();
-                showFastToast("L1 ON");
-                myConnectionBT.write('1');
+                showConfigButtonsForm(buttonList);
             }
         });
 
-        imageViewConfigurar.setOnClickListener(new View.OnClickListener() {
+        imageViewSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                movableButtonPrueba.setIsBlocked(!movableButtonPrueba.getIsBlocked());
-                if (movableButtonPrueba.getIsBlocked()){
-                    showFastToast("Bloqueado");
-                } else {
-                    showFastToast("Desbloqueado");
-                }
+                updateButtonsInfo(baseURL + "/control/updateButtonsInfo.php");
             }
         });
+
+        checkIsConfig(baseURL + "/control/checkIsConfig.php?title=" + TempData.getTitle() + "&email=" + TempData.getEmail());
     }
 
     // Lanzador de peticiones de conexión
@@ -240,7 +258,7 @@ public class Control extends AppCompatActivity {
     }
 
     // Buscar los dispositivos bluetooth emparejados
-    public void buscarDispositivosBT() {
+    public void searchDevicesBT() {
         myBtAdapter = BluetoothAdapter.getDefaultAdapter();
 
         if (myBtAdapter == null) {
@@ -356,4 +374,238 @@ public class Control extends AppCompatActivity {
             }
         }, 250);
     }
+
+    //JSON buttons sql
+
+    private void loadButtonsInfo(String URL){
+
+        final Character[] character = new Character[1];
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(URL, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                for (int i = 0; i < response.length(); i++) {
+                    try {
+                        JSONArray buttonsArray = response.getJSONArray(i);
+                        for (int j = 0; j < buttonsArray.length(); j++) {
+                            JSONObject buttonJSON = buttonsArray.getJSONObject(j);
+
+                            String name = buttonJSON.getString("name");
+                            char character = buttonJSON.getString("character").charAt(0);
+                            int posX = buttonJSON.getInt("position_x");
+                            int posY = buttonJSON.getInt("position_y");
+                            boolean visibility = buttonJSON.getBoolean("visibility");
+
+                            buttonList.get(j).setName(name);
+                            buttonList.get(j).setText(name);
+                            buttonList.get(j).setCharacter(character);
+                            buttonList.get(j).setPositionX(posX);
+                            buttonList.get(j).setPositionY(posY);
+                            buttonList.get(j).setIsVisible(visibility);
+                            buttonList.get(j).moveToConfiguredPosition();
+                        }
+                        //Toast.makeText(getApplicationContext(), "Botones cargados correctamente", Toast.LENGTH_SHORT).show();
+                    } catch (JSONException e) {
+                        Toast.makeText(getApplicationContext(), "No se encontraron botones", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
+        requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(jsonArrayRequest);
+    }
+
+    public void updateButtonsInfo(String URL){
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject jsonResponse = new JSONObject(response);
+                    boolean success = jsonResponse.getBoolean("success");
+                    String message = jsonResponse.getString("message");
+
+                    if (success) {
+                        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+                    }
+                } catch (JSONException e) {
+                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_SHORT).show();
+            }
+        }){
+            @Nullable
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("title", TempData.getTitle());
+                params.put("email", TempData.getEmail());
+
+                JSONArray buttonsArray = new JSONArray();
+                for(int i = 0; i < buttonList.size(); i++){
+                    JSONObject button = new JSONObject();
+                    try {
+                        button.put("name", buttonList.get(i).getName());
+                        button.put("character", String.valueOf(buttonList.get(i).getCharacter()));
+                        button.put("position_x", buttonList.get(i).getPositionX());
+                        button.put("position_y", buttonList.get(i).getPositionY());
+                        button.put("visibility", buttonList.get(i).getIsVisible());
+                        buttonsArray.put(button);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                params.put("buttons", buttonsArray.toString());
+                return params;
+            }
+        };
+        requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(stringRequest);
+    }
+
+    private void checkIsConfig(String URL){
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(URL, new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                JSONObject jsonObject = null;
+                for (int i = 0; i < response.length(); i++) {
+                    try {
+                        jsonObject = response.getJSONObject(i);
+                        if (jsonObject.getString("is_config").equals("1")){
+                            loadButtonsInfo(baseURL + "/control/loadButtonsInfo.php?title=" + TempData.getTitle() + "&email=" + TempData.getEmail());
+                        } else {
+                            // Cargar atributos por default
+                            updateButtonsInfo(baseURL + "/control/updateButtonsInfo.php");
+                        }
+                    } catch (JSONException e) {
+                        Toast.makeText(getApplicationContext(), "is_config no encontrado", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
+        requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(jsonArrayRequest);
+    }
+
+    // config buttons
+
+    private void showConfigButtonsForm(ArrayList<MovileButton> buttonList ) {
+
+        final String[] selectedButtonName = new String[1];
+        final MovileButton[] buttonSelected = new MovileButton[1];
+
+        View formularioView = getLayoutInflater().inflate(R.layout.config_buttons_form, null);
+
+        Spinner spinnerButtons = formularioView.findViewById(R.id.spinnerButtons);
+        Switch switchLock = formularioView.findViewById(R.id.switchLock);
+        Button buttonHide = formularioView.findViewById(R.id.buttonHide);
+        Button buttonShow = formularioView.findViewById(R.id.buttonShow);
+        Switch switchVisible = formularioView.findViewById(R.id.switchVisible);
+        EditText editTextName = formularioView.findViewById(R.id.editTextName);
+        EditText editTextCharacter = formularioView.findViewById(R.id.editTextCharacter);
+        Button buttonSave = formularioView.findViewById(R.id.buttonSave);
+
+        switchLock.setChecked(MovileButton.getIsBlocked());
+
+        ArrayList<String> buttonNames = new ArrayList<>();
+        for (MovileButton button : buttonList) {
+            buttonNames.add(button.getName());
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, buttonNames);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerButtons.setAdapter(adapter);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(formularioView);
+        builder.setCancelable(true);
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+        spinnerButtons.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long id) {
+                selectedButtonName[0] = buttonNames.get(position);
+                buttonSelected[0] = buttonList.get(position);
+                editTextName.setText(buttonSelected[0].getName());
+                editTextCharacter.setText(String.valueOf(buttonSelected[0].getCharacter()));
+                switchVisible.setChecked(buttonSelected[0].getIsVisible());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+            }
+        });
+
+        buttonShow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                for (int i = 0; i < buttonList.size(); i++){
+                    buttonList.get(i).setIsVisible(true);
+                }
+            }
+        });
+
+        buttonHide.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                for (int i = 0; i < buttonList.size(); i++){
+                    buttonList.get(i).setIsVisible(false);
+                }
+            }
+        });
+
+        switchLock.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                if (isChecked) {
+                    MovileButton.setIsBlocked(true);
+                    Toast.makeText(Control.this, "Bloqueado", Toast.LENGTH_SHORT).show();
+                } else {
+                    MovileButton.setIsBlocked(false);
+                    Toast.makeText(Control.this, "Desbloqueado", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        buttonSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (editTextName.getText().toString().length() < 5){
+                    buttonSelected[0].setName(editTextName.getText().toString());
+                    buttonSelected[0].setText(editTextName.getText().toString());
+                } else {
+                    buttonSelected[0].setName(editTextName.getText().toString().substring(0,5));
+                    buttonSelected[0].setText(editTextName.getText().toString().substring(0,5));
+                }
+                buttonSelected[0].setIsVisible(switchVisible.isChecked());
+                buttonSelected[0].setCharacter(editTextCharacter.getText().toString().charAt(0));
+                updateButtonsInfo(baseURL + "/updateButtonsInfo.php");
+            }
+        });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
+    }
+
 }

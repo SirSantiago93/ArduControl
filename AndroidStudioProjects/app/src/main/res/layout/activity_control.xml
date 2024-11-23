@@ -7,48 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".Control">
 
-    <Button
-        android:id="@+id/buttonOnL1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="124dp"
-        android:text="L1 ON"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.063"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/buttonOffL1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="196dp"
-        android:text="L1 OFF"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.062"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/buttonOnL2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="124dp"
-        android:layout_marginEnd="44dp"
-        android:text="L2 ON"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/buttonOffL2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="200dp"
-        android:layout_marginEnd="44dp"
-        android:text="L2 OFF"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <LinearLayout
         android:id="@+id/linearLayout6"
         android:layout_width="693dp"
@@ -56,22 +14,21 @@
         android:layout_marginTop="16dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.578"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <Button
-            android:id="@+id/buttonBuscar"
+            android:id="@+id/buttonSearch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="#3F51B5"
-            android:text="Buscar"
+            android:text="BUSCAR"
             android:textColor="#FFFFFF"
             app:cornerRadius="1dp" />
 
         <Spinner
             android:id="@+id/spinnerIds"
-            android:layout_width="316dp"
+            android:layout_width="221dp"
             android:layout_height="48dp" />
 
         <Button
@@ -79,7 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="#27812B"
-            android:text="Conectar"
+            android:text="CONECTAR"
             android:textColor="#FFFFFF"
             app:cornerRadius="1dp" />
 
@@ -88,7 +45,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="#A6281E"
-            android:text="Desconectar"
+            android:text="DESCONECTAR"
             android:textColor="#FFFFFF"
             app:cornerRadius="1dp" />
 
@@ -98,26 +55,268 @@
             android:layout_height="match_parent"
             app:srcCompat="@android:drawable/ic_menu_preferences" />
 
+        <ImageView
+            android:id="@+id/imageViewSave"
+            android:layout_width="53dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            app:srcCompat="@android:drawable/ic_menu_save" />
+
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/linearLayout5"
-        android:layout_width="693dp"
-        android:layout_height="24dp"
-        android:layout_marginBottom="312dp"
+        android:layout_width="match_parent"
+        android:layout_height="285dp"
+        android:layout_marginTop="20dp"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.64"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout6"
-        app:layout_constraintVertical_bias="1.0">
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout8">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal">
+
+            <com.example.arducontrol.MovileButton
+                android:id="@+id/mButtonA"
+                android:layout_width="70dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="20dp"
+                android:text="BTN_A"
+                app:layout_constraintEnd_toStartOf="@+id/mButtonB"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.example.arducontrol.MovileButton
+                android:id="@+id/mButtonH"
+                android:layout_width="70dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="28dp"
+                android:layout_marginEnd="20dp"
+                android:text="BTN_H"
+                app:layout_constraintEnd_toStartOf="@+id/mButtonI"
+                app:layout_constraintTop_toBottomOf="@+id/mButtonA" />
+
+            <com.example.arducontrol.MovileButton
+                android:id="@+id/mButtonO"
+                android:layout_width="70dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="28dp"
+                android:layout_marginEnd="20dp"
+                android:text="BTN_O"
+                app:layout_constraintEnd_toStartOf="@+id/mButtonP"
+                app:layout_constraintTop_toBottomOf="@+id/mButtonH" />
+
+            <com.example.arducontrol.MovileButton
+                android:id="@+id/mButtonP"
+                android:layout_width="70dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="28dp"
+                android:layout_marginEnd="20dp"
+                android:text="BTN_P"
+                app:layout_constraintEnd_toStartOf="@+id/mButtonQ"
+                app:layout_constraintTop_toBottomOf="@+id/mButtonI" />
+
+            <com.example.arducontrol.MovileButton
+                android:id="@+id/mButtonQ"
+                android:layout_width="70dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="28dp"
+                android:layout_marginEnd="20dp"
+                android:text="BTN_Q"
+                app:layout_constraintEnd_toStartOf="@+id/mButtonR"
+                app:layout_constraintTop_toBottomOf="@+id/mButtonJ" />
+
+            <com.example.arducontrol.MovileButton
+                android:id="@+id/mButtonR"
+                android:layout_width="70dp"
+                android:layout_height="60dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="28dp"
+                android:text="BTN_R"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/mButtonQ"
+                app:layout_constraintTop_toBottomOf="@+id/mButtonK" />
+
+            <com.example.arducontrol.MovileButton
+                android:id="@+id/mButtonS"
+                android:layout_width="70dp"
+                android:layout_height="60dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="28dp"
+                android:text="BTN_S"
+                app:layout_constraintStart_toEndOf="@+id/mButtonR"
+                app:layout_constraintTop_toBottomOf="@+id/mButtonL" />
+
+            <com.example.arducontrol.MovileButton
+                android:id="@+id/mButtonT"
+                android:layout_width="70dp"
+                android:layout_height="60dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="28dp"
+                android:text="BTN_T"
+                app:layout_constraintStart_toEndOf="@+id/mButtonS"
+                app:layout_constraintTop_toBottomOf="@+id/mButtonM" />
+
+            <com.example.arducontrol.MovileButton
+                android:id="@+id/mButtonI"
+                android:layout_width="70dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="28dp"
+                android:layout_marginEnd="20dp"
+                android:text="BTN_I"
+                app:layout_constraintEnd_toStartOf="@+id/mButtonJ"
+                app:layout_constraintTop_toBottomOf="@+id/mButtonB" />
+
+            <com.example.arducontrol.MovileButton
+                android:id="@+id/mButtonJ"
+                android:layout_width="70dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="28dp"
+                android:layout_marginEnd="20dp"
+                android:text="BTN_J"
+                app:layout_constraintEnd_toStartOf="@+id/mButtonK"
+                app:layout_constraintTop_toBottomOf="@+id/mButtonC" />
+
+            <com.example.arducontrol.MovileButton
+                android:id="@+id/mButtonK"
+                android:layout_width="70dp"
+                android:layout_height="60dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="28dp"
+                android:text="BTN_K"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/mButtonJ"
+                app:layout_constraintTop_toBottomOf="@+id/mButtonD" />
+
+            <com.example.arducontrol.MovileButton
+                android:id="@+id/mButtonL"
+                android:layout_width="70dp"
+                android:layout_height="60dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="28dp"
+                android:text="BTN_L"
+                app:layout_constraintStart_toEndOf="@+id/mButtonK"
+                app:layout_constraintTop_toBottomOf="@+id/mButtonE" />
+
+            <com.example.arducontrol.MovileButton
+                android:id="@+id/mButtonM"
+                android:layout_width="70dp"
+                android:layout_height="60dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="28dp"
+                android:text="BTN_M"
+                app:layout_constraintStart_toEndOf="@+id/mButtonL"
+                app:layout_constraintTop_toBottomOf="@+id/mButtonF" />
+
+            <com.example.arducontrol.MovileButton
+                android:id="@+id/mButtonB"
+                android:layout_width="70dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="20dp"
+                android:text="BTN_B"
+                app:layout_constraintEnd_toStartOf="@+id/mButtonC"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.example.arducontrol.MovileButton
+                android:id="@+id/mButtonC"
+                android:layout_width="70dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="20dp"
+                android:text="BTN_C"
+                app:layout_constraintEnd_toStartOf="@+id/mButtonD"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.example.arducontrol.MovileButton
+                android:id="@+id/mButtonD"
+                android:layout_width="70dp"
+                android:layout_height="60dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="24dp"
+                android:text="BTN_D"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/mButtonC"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.example.arducontrol.MovileButton
+                android:id="@+id/mButtonE"
+                android:layout_width="70dp"
+                android:layout_height="60dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="24dp"
+                android:text="BTN_E"
+                app:layout_constraintStart_toEndOf="@+id/mButtonD"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.example.arducontrol.MovileButton
+                android:id="@+id/mButtonF"
+                android:layout_width="70dp"
+                android:layout_height="60dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="24dp"
+                android:text="BTN_F"
+                app:layout_constraintStart_toEndOf="@+id/mButtonE"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.example.arducontrol.MovileButton
+                android:id="@+id/mButtonG"
+                android:layout_width="70dp"
+                android:layout_height="60dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="24dp"
+                android:text="BTN_G"
+                app:layout_constraintStart_toEndOf="@+id/mButtonF"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.example.arducontrol.MovileButton
+                android:id="@+id/mButtonN"
+                android:layout_width="70dp"
+                android:layout_height="60dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="28dp"
+                android:text="BTN_N"
+                app:layout_constraintStart_toEndOf="@+id/mButtonM"
+                app:layout_constraintTop_toBottomOf="@+id/mButtonG" />
+
+            <com.example.arducontrol.MovileButton
+                android:id="@+id/mButtonU"
+                android:layout_width="70dp"
+                android:layout_height="60dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="28dp"
+                android:text="BTN_U"
+                app:layout_constraintStart_toEndOf="@+id/mButtonT"
+                app:layout_constraintTop_toBottomOf="@+id/mButtonN" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout8"
+        android:layout_width="697dp"
+        android:layout_height="22dp"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.529"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout6">
 
         <TextView
             android:id="@+id/textViewState"
-            android:layout_width="112dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center"
+            android:gravity="left"
             android:text="Estado: Desconectado" />
 
         <TextView
@@ -126,33 +325,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="left"
-            android:text="Ensamble: Test lights v0.1" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout5">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <com.example.arducontrol.MovableButton
-                android:id="@+id/mButtonTest"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="196dp"
-                android:layout_marginTop="52dp"
-                android:text="MButton"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            android:text="Ensamble: Controlador de luces v0.1" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="#787575"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp"
+        android:paddingStart="10dp"
+        android:paddingLeft="10dp"
+        android:paddingEnd="10dp">
+
+        <TextView
+            android:id="@+id/textView8"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#D3CECE"
+            android:gravity="center"
+            android:text="GENERAL"
+            android:textSize="18dp"
+            android:textStyle="bold" />
+
+        <Switch
+            android:id="@+id/switchLock"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#D3CECE"
+            android:gravity="center"
+            android:text="Bloquear botones" />
+
+        <Button
+            android:id="@+id/buttonHide"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:text="OCULTAR BOTONES"
+            android:textSize="10dp" />
+
+        <Button
+            android:id="@+id/buttonShow"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:textSize="10dp"
+            android:text="MOSTRAR BOTONES" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp"
+        android:paddingStart="10dp"
+        android:paddingLeft="10dp"
+        android:paddingEnd="10dp">
+
+        <TextView
+            android:id="@+id/textView9"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#D3CECE"
+            android:gravity="center"
+            android:text="INDIVIDUAL"
+            android:textSize="18dp"
+            android:textStyle="bold" />
+
+        <Spinner
+            android:id="@+id/spinnerButtons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:background="#D3CECE" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#D3CECE"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textView13"
+                android:layout_width="70dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Nombre:" />
+
+            <EditText
+                android:id="@+id/editTextName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#D3CECE"
+                android:gravity="center"
+                android:hint="BTN_A"
+                android:textSize="16dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#D3CECE"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textView14"
+                android:layout_width="70dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Caracter:" />
+
+            <EditText
+                android:id="@+id/editTextCharacter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#D3CECE"
+                android:gravity="center"
+                android:hint="A"
+                android:textSize="16dp" />
+        </LinearLayout>
+
+        <Switch
+            android:id="@+id/switchVisible"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#D3CECE"
+            android:gravity="center"
+            android:text="Visible" />
+
+        <Button
+            android:id="@+id/buttonSave"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:textSize="10dp"
+            android:text="GUARDAR" />
+
+    </LinearLayout>
+
+</LinearLayout>

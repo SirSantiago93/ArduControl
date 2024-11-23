@@ -6,31 +6,39 @@ import android.view.MotionEvent;
 import android.view.View;
 import androidx.appcompat.widget.AppCompatButton;
 
-public class MovableButton extends AppCompatButton {
+public class MovileButton extends AppCompatButton {
 
-    private boolean isBlocked = false;
+    private float positionX, positionY;
+    private float defaultX, defaultY;
+    private String name = "BTN_A";
+    private char character = 'A';
+    private boolean isVisible = true;
+
+    // Define si el control esta bloqueado o no
+    private static boolean isBlocked = true;
     private float dX, dY;
     private float initialX, initialY;
     private static final int CLICK_ACTION_THRESHOLD = 10;
     private boolean isDragging;
 
-    public MovableButton(Context context) {
+    public MovileButton(Context context) {
         super(context);
         init();
     }
 
-    public MovableButton(Context context, AttributeSet attrs) {
+    public MovileButton(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public MovableButton(Context context, AttributeSet attrs, int defStyleAttr) {
+    public MovileButton(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
 
     private void init() {
-        setOnTouchListener((view, event) -> { // Interface OnTouchListener implementada con lambda
+        // Interfaz OnTouchListener implementada con lambda
+        setOnTouchListener((view, event) -> {
             switch (event.getAction()) {
 
                 case MotionEvent.ACTION_DOWN:
@@ -39,7 +47,7 @@ public class MovableButton extends AppCompatButton {
                     dX = view.getX() - initialX; // Mantener la misma distancia X a lo largo del movimiento
                     dY = view.getY() - initialY; // Mantener la misma distancia Y a lo largo del movimiento
                     isDragging = false;
-                    scaleButton(view, 0.9f);
+                    scaleSize(view, 0.9f);
                     break;
 
                 case MotionEvent.ACTION_MOVE:
@@ -61,15 +69,15 @@ public class MovableButton extends AppCompatButton {
 
                     // Restringir el movimiento dentro del contenedor (Posición relativa al contenedor)
                     if (deltaX < 0) {
-                        deltaX = 0; // No permitirle moverse a la izquierda
+                        deltaX = 0;
                     } else if (deltaX + buttonWidth > containerWidth) {
-                        deltaX = containerWidth - buttonWidth; // No permitirle moverse a la derecha
+                        deltaX = containerWidth - buttonWidth;
                     }
 
                     if (deltaY < 0) {
-                        deltaY = 0; // No permitirle moverse hacia arriba
+                        deltaY = 0;
                     } else if (deltaY + buttonHeight > containerHeight) {
-                        deltaY = containerHeight - buttonHeight; // No permitirle moverse hacia abajo
+                        deltaY = containerHeight - buttonHeight;
                     }
 
                     view.animate()
@@ -78,6 +86,7 @@ public class MovableButton extends AppCompatButton {
                             .setDuration(0)
                             .start();
 
+                    // Verificar si se esta arrastrando el boton
                     float deltaXMovement = Math.abs(event.getRawX() - initialX);
                     float deltaYMovement = Math.abs(event.getRawY() - initialY);
                     if (deltaXMovement > CLICK_ACTION_THRESHOLD || deltaYMovement > CLICK_ACTION_THRESHOLD) {
@@ -86,12 +95,13 @@ public class MovableButton extends AppCompatButton {
                     break;
 
                 case MotionEvent.ACTION_UP:
-                    scaleButton(view, 1.0f);
+                    scaleSize(view, 1.0f);
                     if (!isDragging) {
                         performClick();
                     }
+                    setPositionX(this.getX());
+                    setPositionY(this.getY());
                     break;
-
                 default:
                     return false;
             }
@@ -105,16 +115,76 @@ public class MovableButton extends AppCompatButton {
         return true;
     }
 
-    private void scaleButton(View view, float scale) {
+    private void scaleSize(View view, float scale) {
         view.setScaleX(scale);
         view.setScaleY(scale);
     }
 
-    public void setIsBlocked(Boolean value){
-        this.isBlocked = value;
+    public static void setIsBlocked(Boolean value){
+        isBlocked = value;
     }
 
-    public boolean getIsBlocked(){
-        return this.isBlocked;
+    public static boolean getIsBlocked(){
+        return isBlocked;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public char getCharacter() {
+        return character;
+    }
+
+    public void setCharacter(char character) {
+        this.character = character;
+    }
+
+    public void saveDefaultPositions(float x, float y){
+        defaultX = x;
+        defaultY = y;
+        positionX = defaultX;
+        positionY = defaultY;
+    }
+
+    public void setPositionX(float positionX) {
+        this.positionX = positionX;
+    }
+
+    public void setPositionY(float positionY) {
+        this.positionY = positionY;
+    }
+
+    public float getPositionX() {
+        return positionX;
+    }
+
+    public float getPositionY() {
+        return positionY;
+    }
+
+    public boolean getIsVisible() {
+        return isVisible;
+    }
+
+    public void setIsVisible(boolean visible) {
+        isVisible = visible;
+        if (isVisible){
+            this.setVisibility(View.VISIBLE);
+        } else{
+            this.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    public void moveToDefaultPosition(){
+        this.animate().x(defaultX).y(defaultY).setDuration(0).start();
+    }
+
+    public void moveToConfiguredPosition(){
+        this.animate().x(positionX).y(positionY).setDuration(0).start();
     }
 }
